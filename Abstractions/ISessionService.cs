@@ -300,4 +300,20 @@ public interface ISessionService
     /// <returns>True if the response was processed successfully.</returns>
     [Obsolete("Use IPermissionService.ReplyAsync instead.")]
     Task<bool> RespondToPermissionAsync(string sessionId, string permissionId, PermissionRespondRequest request, string? directory = null, string? workspace = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Subscribe to events for a specific session with reconnection support.
+    /// </summary>
+    /// <param name="sessionId">The session identifier to filter events.</param>
+    /// <param name="options">SSE subscription options.</param>
+    /// <param name="directory">Optional project directory filter.</param>
+    /// <param name="workspace">Optional workspace filter.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A subscription to session events.</returns>
+    Task<SseSubscription<Event>> SubscribeAsync(
+        string sessionId,
+        SseOptions options,
+        string? directory = null,
+        string? workspace = null,
+        CancellationToken cancellationToken = default);
 }

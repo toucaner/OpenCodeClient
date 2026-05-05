@@ -17,6 +17,7 @@ public class GlobalEvent
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(EventServerConnected), "server.connected")]
+[JsonDerivedType(typeof(EventServerHeartbeat), "server.heartbeat")]
 [JsonDerivedType(typeof(EventGlobalDisposed), "global.disposed")]
 [JsonDerivedType(typeof(EventTuiPromptAppend), "tui.prompt.append")]
 [JsonDerivedType(typeof(EventTuiCommandExecute), "tui.command.execute")]
@@ -64,6 +65,26 @@ public class GlobalEvent
 public abstract class Event
 {
     [JsonPropertyName("type")] public abstract string Type { get; }
+
+    public string? GetSessionId() => this switch
+    {
+        EventSessionCreated e => e.Properties.Info.Id,
+        EventSessionUpdated e => e.Properties.Info.Id,
+        EventSessionDeleted e => e.Properties.Info.Id,
+        EventSessionIdle e => e.Properties.SessionId,
+        EventSessionError e => e.Properties.SessionId,
+        EventMessageUpdated e => e.Properties.Info.SessionId,
+        EventMessageRemoved e => e.Properties.SessionId,
+        EventMessagePartUpdated e => e.Properties.Part?.SessionId,
+        EventMessagePartDelta e => e.Properties.SessionId,
+        EventPermissionAsked e => e.Properties.SessionId,
+        EventPermissionReplied e => e.Properties.SessionId,
+        _ => null
+    };
+
+    public bool IsHeartbeat() => this is EventServerHeartbeat;
+
+    public bool IsConnected() => this is EventServerConnected;
 }
 
 /// <summary>
@@ -72,6 +93,15 @@ public abstract class Event
 public class EventServerConnected : Event
 {
     public override string Type => "server.connected";
+    [JsonPropertyName("properties")] public EmptyProperties Properties { get; set; } = new();
+}
+
+/// <summary>
+/// Event: server heartbeat.
+/// </summary>
+public class EventServerHeartbeat : Event
+{
+    public override string Type => "server.heartbeat";
     [JsonPropertyName("properties")] public EmptyProperties Properties { get; set; } = new();
 }
 

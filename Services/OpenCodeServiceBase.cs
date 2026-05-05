@@ -7,6 +7,7 @@ namespace OpenCodeClient.Services;
 internal abstract class OpenCodeServiceBase
 {
     protected HttpClient Http { get; }
+    protected string BaseUrl { get; }
     protected static JsonSerializerOptions JsonOptions { get; } = new(JsonSerializerDefaults.Web)
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -16,6 +17,7 @@ internal abstract class OpenCodeServiceBase
     protected OpenCodeServiceBase(HttpClient httpClient)
     {
         Http = httpClient;
+        BaseUrl = httpClient.BaseAddress?.ToString().TrimEnd('/') ?? "";
     }
 
     protected static string BuildQuery(string basePath, Dictionary<string, string?> queryParams)

@@ -22,6 +22,50 @@ public interface IGlobalService
     IAsyncEnumerable<GlobalEvent> SubscribeToEventsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Subscribe to events for the current directory with reconnection support.
+    /// </summary>
+    /// <param name="options">SSE subscription options.</param>
+    /// <param name="sessionFilter">Optional session ID to filter events.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A subscription to the event stream.</returns>
+    Task<SseSubscription<Event>> SubscribeAsync(
+        SseOptions options,
+        string? sessionFilter = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Subscribe to global events (all directories) with reconnection support.
+    /// </summary>
+    /// <param name="options">SSE subscription options.</param>
+    /// <param name="sessionFilter">Optional session ID to filter events.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A subscription to the global event stream.</returns>
+    Task<SseSubscription<Event>> SubscribeGlobalAsync(
+        SseOptions options,
+        string? sessionFilter = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Subscribe to raw SSE events for debugging.
+    /// </summary>
+    /// <param name="options">SSE subscription options.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A subscription to raw SSE events.</returns>
+    Task<SseSubscription<RawSseEvent>> SubscribeRawAsync(
+        SseOptions options,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Create a session event router for per-session event multiplexing.
+    /// </summary>
+    /// <param name="options">SSE subscription options.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A session event router.</returns>
+    Task<SessionEventRouter> CreateSessionRouterAsync(
+        SseOptions options,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieve the current global OpenCode configuration settings and preferences.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>

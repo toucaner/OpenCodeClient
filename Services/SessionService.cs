@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenCodeClient.Abstractions;
+using OpenCodeClient.Events;
 using OpenCodeClient.Models;
 
 namespace OpenCodeClient.Services;
@@ -179,4 +180,15 @@ internal sealed class SessionService(HttpClient httpClient) : OpenCodeServiceBas
         return PostAsync<bool>(url, request, cancellationToken);
     }
 #pragma warning restore CS0612
+
+    public async Task<SseSubscription<Event>> SubscribeAsync(
+        string sessionId,
+        SseOptions options,
+        string? directory = null,
+        string? workspace = null,
+        CancellationToken cancellationToken = default)
+    {
+        var subscriber = new SseSubscriber(Http, BaseUrl, directory, JsonOptions);
+        return await subscriber.SubscribeAsync(options, sessionId, cancellationToken);
+    }
 }
