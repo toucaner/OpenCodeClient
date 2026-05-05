@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Web;
+using OpenCodeClient.Converters;
 
 namespace OpenCodeClient.Services;
 
@@ -11,7 +13,16 @@ internal abstract class OpenCodeServiceBase
     protected static JsonSerializerOptions JsonOptions { get; } = new(JsonSerializerDefaults.Web)
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Converters =
+        {
+            new PartConverter(),
+            new EventConverter(),
+            new PartInputConverter(),
+            new ToolStateConverter(),
+            new FilePartSourceConverter(),
+            new OutputFormatConverter()
+        }
     };
 
     protected OpenCodeServiceBase(HttpClient httpClient)
