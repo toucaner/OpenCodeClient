@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
         {
             var options = sp.GetRequiredService<IOptions<OpenCodeClientOptions>>().Value;
             client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/'));
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
 
             if (!string.IsNullOrEmpty(options.Password))
             {

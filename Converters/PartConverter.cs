@@ -35,6 +35,8 @@ public class PartConverter : JsonConverter<Part>
 
     public override void Write(Utf8JsonWriter writer, Part value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, value, value.GetType(), options);
+        var json = JsonSerializer.Serialize(value, value.GetType(), options);
+        using var doc = JsonDocument.Parse(json);
+        doc.RootElement.WriteTo(writer);
     }
 }

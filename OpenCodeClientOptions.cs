@@ -22,4 +22,9 @@ public class OpenCodeClientOptions
     /// Corresponds to the <c>OPENCODE_SERVER_PASSWORD</c> environment variable on the server.
     /// </summary>
     public string? Password { get; set; }
+
+    /// <summary>
+    /// Timeout for HTTP requests in seconds. Defaults to 600 seconds (10 minutes).
+    /// </summary>
+    public int TimeoutSeconds { get; set; } = 600;
 }
