@@ -25,8 +25,23 @@ public class OutputFormatConverter : JsonConverter<OutputFormat>
 
     public override void Write(Utf8JsonWriter writer, OutputFormat value, JsonSerializerOptions options)
     {
-        var json = JsonSerializer.Serialize(value, value.GetType(), options);
-        using var doc = JsonDocument.Parse(json);
-        doc.RootElement.WriteTo(writer);
+        if (value is OutputFormatText)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "text");
+            writer.WriteEndObject();
+        }
+        else if (value is OutputFormatJsonSchema schema)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "json_schema");
+            writer.WriteEndObject();
+        }
+        else
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "text");
+            writer.WriteEndObject();
+        }
     }
 }

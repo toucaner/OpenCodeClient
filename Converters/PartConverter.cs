@@ -35,8 +35,45 @@ public class PartConverter : JsonConverter<Part>
 
     public override void Write(Utf8JsonWriter writer, Part value, JsonSerializerOptions options)
     {
-        var json = JsonSerializer.Serialize(value, value.GetType(), options);
-        using var doc = JsonDocument.Parse(json);
-        doc.RootElement.WriteTo(writer);
+        WritePart(writer, value);
+    }
+
+    private static void WritePart(Utf8JsonWriter writer, Part part)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("id", part.Id);
+        writer.WriteString("sessionID", part.SessionId);
+        writer.WriteString("messageID", part.MessageId);
+
+        if (part is TextPart text)
+        {
+            writer.WriteString("type", "text");
+            writer.WriteString("text", text.Text);
+            if (text.Synthetic.HasValue) writer.WriteBoolean("synthetic", text.Synthetic.Value);
+            if (text.Ignored.HasValue) writer.WriteBoolean("ignored", text.Ignored.Value);
+        }
+        else if (part is ReasoningPart reasoning)
+        {
+            writer.WriteString("type", "reasoning");
+            writer.WriteString("text", reasoning.Text);
+        }
+        else if (part is ToolPart tool)
+        {
+            writer.WriteString("type", "tool");
+            writer.WriteString("callID", tool.CallId);
+            writer.WriteString("tool", tool.Tool);
+        }
+        else if (part is FilePart file)
+        {
+            writer.WriteString("type", "file");
+            writer.WriteString("mime", file.Mime);
+            writer.WriteString("url", file.Url);
+        }
+        else
+        {
+            writer.WriteString("type", "text");
+        }
+
+        writer.WriteEndObject();
     }
 }

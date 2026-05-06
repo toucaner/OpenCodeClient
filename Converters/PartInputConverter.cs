@@ -31,17 +31,76 @@ public class PartInputConverter : JsonConverter<PartInput>
 
     public override void Write(Utf8JsonWriter writer, PartInput value, JsonSerializerOptions options)
     {
-        var runtimeType = value.GetType();
-
-        if (runtimeType == typeof(TextPartInput))
-            JsonSerializer.Serialize(writer, (TextPartInput)value, DirectOptions);
-        else if (runtimeType == typeof(FilePartInput))
-            JsonSerializer.Serialize(writer, (FilePartInput)value, DirectOptions);
-        else if (runtimeType == typeof(AgentPartInput))
-            JsonSerializer.Serialize(writer, (AgentPartInput)value, DirectOptions);
-        else if (runtimeType == typeof(SubtaskPartInput))
-            JsonSerializer.Serialize(writer, (SubtaskPartInput)value, DirectOptions);
+        if (value is TextPartInput text)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "text");
+            if (!string.IsNullOrEmpty(text.Id))
+                writer.WriteString("id", text.Id);
+            writer.WriteString("text", text.Text);
+            if (text.Synthetic.HasValue)
+                writer.WriteBoolean("synthetic", text.Synthetic.Value);
+            if (text.Ignored.HasValue)
+                writer.WriteBoolean("ignored", text.Ignored.Value);
+            if (text.Time is not null)
+            {
+                writer.WritePropertyName("time");
+                writer.WriteStartObject();
+                writer.WriteNumber("start", text.Time.Start);
+                if (text.Time.End.HasValue)
+                    writer.WriteNumber("end", text.Time.End.Value);
+                writer.WriteEndObject();
+            }
+            writer.WriteEndObject();
+        }
+        else if (value is FilePartInput file)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "file");
+            if (!string.IsNullOrEmpty(file.Id))
+                writer.WriteString("id", file.Id);
+            writer.WriteString("mime", file.Mime);
+            writer.WriteString("url", file.Url);
+            if (!string.IsNullOrEmpty(file.Filename))
+                writer.WriteString("filename", file.Filename);
+            writer.WriteEndObject();
+        }
+        else if (value is AgentPartInput agent)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "agent");
+            if (!string.IsNullOrEmpty(agent.Id))
+                writer.WriteString("id", agent.Id);
+            writer.WriteString("name", agent.Name);
+            writer.WriteEndObject();
+        }
+        else if (value is SubtaskPartInput subtask)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "subtask");
+            if (!string.IsNullOrEmpty(subtask.Id))
+                writer.WriteString("id", subtask.Id);
+            writer.WriteString("prompt", subtask.Prompt);
+            if (!string.IsNullOrEmpty(subtask.Description))
+                writer.WriteString("description", subtask.Description);
+            writer.WriteString("agent", subtask.Agent);
+            if (subtask.Model is not null)
+            {
+                writer.WritePropertyName("model");
+                writer.WriteStartObject();
+                writer.WriteString("providerID", subtask.Model.ProviderId);
+                writer.WriteString("modelID", subtask.Model.ModelId);
+                writer.WriteEndObject();
+            }
+            if (!string.IsNullOrEmpty(subtask.Command))
+                writer.WriteString("command", subtask.Command);
+            writer.WriteEndObject();
+        }
         else
-            JsonSerializer.Serialize(writer, (TextPartInput)value, DirectOptions);
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "text");
+            writer.WriteEndObject();
+        }
     }
 }

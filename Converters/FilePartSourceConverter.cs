@@ -26,8 +26,32 @@ public class FilePartSourceConverter : JsonConverter<FilePartSource>
 
     public override void Write(Utf8JsonWriter writer, FilePartSource value, JsonSerializerOptions options)
     {
-        var json = JsonSerializer.Serialize(value, value.GetType(), options);
-        using var doc = JsonDocument.Parse(json);
-        doc.RootElement.WriteTo(writer);
+        if (value is FileSource file)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "file");
+            writer.WriteString("path", file.Path);
+            writer.WriteEndObject();
+        }
+        else if (value is SymbolSource symbol)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "symbol");
+            writer.WriteString("path", symbol.Path);
+            writer.WriteEndObject();
+        }
+        else if (value is ResourceSource resource)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "resource");
+            writer.WriteString("uri", resource.Uri);
+            writer.WriteEndObject();
+        }
+        else
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", "file");
+            writer.WriteEndObject();
+        }
     }
 }

@@ -9,7 +9,7 @@
     <NoWarn>CS1591</NoWarn>
     <RootNamespace>OpenCodeClient</RootNamespace>
     <PackageId>OpenCodeClient</PackageId>
-    <Version>0.1.5</Version>
+    <Version>0.1.6</Version>
     <Description>A .NET client library for interacting with the OpenCode API.</Description>
     <Authors>OpenCodeClient</Authors>
     <PackageTags>opencode;api;client</PackageTags>

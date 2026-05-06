@@ -68,14 +68,18 @@ internal abstract class OpenCodeServiceBase
 
     protected async Task<T> PostAsync<T>(string url, object body, CancellationToken ct)
     {
-        var response = await Http.PostAsJsonAsync(url, body, JsonOptions, ct).ConfigureAwait(false);
+        var json = JsonSerializer.Serialize(body, body.GetType(), JsonOptions);
+        using var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        var response = await Http.PostAsync(url, content, ct).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         return (await response.Content.ReadFromJsonAsync<T>(JsonOptions, ct).ConfigureAwait(false))!;
     }
 
     protected async Task PostNoContentAsync(string url, object body, CancellationToken ct)
     {
-        var response = await Http.PostAsJsonAsync(url, body, JsonOptions, ct).ConfigureAwait(false);
+        var json = JsonSerializer.Serialize(body, body.GetType(), JsonOptions);
+        using var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        var response = await Http.PostAsync(url, content, ct).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
     }
 
