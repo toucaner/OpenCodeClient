@@ -4,9 +4,6 @@ using System.Text.Json.Serialization;
 namespace OpenCodeClient.Models;
 
 /// <summary>Base class for output format variants.</summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-[JsonDerivedType(typeof(OutputFormatText), "text")]
-[JsonDerivedType(typeof(OutputFormatJsonSchema), "json_schema")]
 public abstract class OutputFormat
 {
     [JsonPropertyName("type")] public abstract string Type { get; }
@@ -27,10 +24,6 @@ public class OutputFormatJsonSchema : OutputFormat
 }
 
 /// <summary>Base class for file part source variants.</summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-[JsonDerivedType(typeof(FileSource), "file")]
-[JsonDerivedType(typeof(SymbolSource), "symbol")]
-[JsonDerivedType(typeof(ResourceSource), "resource")]
 public abstract class FilePartSource
 {
     [JsonPropertyName("type")] public abstract string Type { get; }
@@ -73,19 +66,6 @@ public class ResourceSource : FilePartSource
 }
 
 /// <summary>Base class for message part variants.</summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-[JsonDerivedType(typeof(TextPart), "text")]
-[JsonDerivedType(typeof(SubtaskPart), "subtask")]
-[JsonDerivedType(typeof(ReasoningPart), "reasoning")]
-[JsonDerivedType(typeof(FilePart), "file")]
-[JsonDerivedType(typeof(ToolPart), "tool")]
-[JsonDerivedType(typeof(StepStartPart), "step-start")]
-[JsonDerivedType(typeof(StepFinishPart), "step-finish")]
-[JsonDerivedType(typeof(SnapshotPart), "snapshot")]
-[JsonDerivedType(typeof(PatchPart), "patch")]
-[JsonDerivedType(typeof(AgentPart), "agent")]
-[JsonDerivedType(typeof(RetryPart), "retry")]
-[JsonDerivedType(typeof(CompactionPart), "compaction")]
 public abstract class Part
 {
     [JsonPropertyName("id")] public string Id { get; set; } = "";
@@ -223,11 +203,6 @@ public class PartTimeRange
 }
 
 /// <summary>Base class for tool execution state variants.</summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "status")]
-[JsonDerivedType(typeof(ToolStatePending), "pending")]
-[JsonDerivedType(typeof(ToolStateRunning), "running")]
-[JsonDerivedType(typeof(ToolStateCompleted), "completed")]
-[JsonDerivedType(typeof(ToolStateError), "error")]
 public abstract class ToolState
 {
     [JsonPropertyName("status")] public abstract string Status { get; }
@@ -270,11 +245,6 @@ public class ToolStateError : ToolState
 }
 
 /// <summary>Base class for message part input variants.</summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-[JsonDerivedType(typeof(TextPartInput), "text")]
-[JsonDerivedType(typeof(FilePartInput), "file")]
-[JsonDerivedType(typeof(AgentPartInput), "agent")]
-[JsonDerivedType(typeof(SubtaskPartInput), "subtask")]
 public abstract class PartInput
 {
     [JsonPropertyName("type")] public abstract string Type { get; }
